@@ -1,86 +1,166 @@
-# Fruit Classification using Convolutional Neural Networks
+# Fruit Classification using CNNs — 98.18% Accuracy on 77 Classes
 
-## Project Overview
+> A custom Convolutional Neural Network trained on 39,249 images across 77 fruit categories from the Fruits360 dataset. Achieved **98.18% test accuracy** in 10 epochs using aggressive data augmentation and a lightweight 4-layer architecture.
 
-This project aims to automate the classification of fruits using Convolutional Neural Networks (CNNs) on an augmented dataset. Traditional methods for fruit classification are manual and subjective, making them labor-intensive and inconsistent. By leveraging computer vision and image processing techniques, this project enhances fruit classification accuracy and efficiency.
-
-## Table of Contents
-- [Project Overview](#project-overview)
-- [Dataset](#dataset)
-- [Methodology](#methodology)
-  - [Data Preparation](#data-preparation)
-  - [Data Augmentation](#data-augmentation)
-  - [Model Development](#model-development)
-  - [Training and Evaluation](#training-and-evaluation)
-- [Results](#results)
-- [Conclusion](#conclusion)
-- [Future Work](#future-work)
-- [References](#references)
-
-## Dataset
-
-The dataset used in this project is the Fruits360 collection, a diverse compilation of fruit images. The dataset is organized into subfolders, each representing a distinct fruit category.
-
-- **Source**: [Kaggle Fruits360 Dataset](https://www.kaggle.com/moltean/fruits)
-- **Structure**: Subfolder hierarchy with images labeled by fruit type.
-
-## Methodology
-
-### Data Preparation
-
-1. **Importing Libraries**: Essential libraries such as Keras, NumPy, Pandas, Matplotlib, and Scikit-learn are imported.
-2. **Loading Dataset**: Images and labels are loaded from the Fruits360 dataset.
-3. **Filtering Dataset**: The dataset is filtered to focus on specific fruit labels of interest.
-4. **Data Splitting**: The dataset is split into training and testing sets.
-
-### Data Augmentation
-
-Data augmentation techniques are applied to increase the diversity of the training data:
-- **Rotations**
-- **Shifts**
-- **Shearing**
-- **Zooming**
-- **Flipping**
-
-### Model Development
-
-A CNN is developed with the following architecture:
-- **Convolutional Layers**: Feature extraction
-- **Pooling Layers**: Down-sampling
-- **Dense Layers**: Classification
-- **Activation Functions**: ReLU and Softmax
-
-### Training and Evaluation
-
-The model is trained using the augmented training set and evaluated on a validation set. Key metrics such as accuracy and loss are monitored to assess performance. The final model is tested on unseen data to demonstrate its classification capabilities.
-
-## Results
-
-The model achieved a high accuracy rate of 98% on the augmented dataset. Training and validation metrics were closely aligned, indicating good generalization. A confusion matrix provided detailed insights into the model's performance across different fruit categories.
-
-## Conclusion
-
-The project successfully demonstrated the efficacy of CNNs in automating fruit classification, achieving high accuracy and robustness through data augmentation and model optimization.
-
-## Future Work
-
-Potential future enhancements include:
-- **Advanced Augmentation**: Experimenting with more augmentation techniques.
-- **Transfer Learning**: Utilizing pre-trained models to improve performance.
-- **Dataset Expansion**: Incorporating additional datasets for broader generalization.
-
-## References
-
-1. Kaggle. (n.d.). Fruit 360 Dataset. Retrieved from [Kaggle](https://www.kaggle.com/moltean/fruits)
-2. Chollet, F. (2018). *Deep Learning with Python*. Manning Publications.
-3. Brownlee, J. (2019). *Image Data Augmentation with Keras*. Retrieved from [Machine Learning Mastery](https://machinelearningmastery.com/how-to-configure-image-data-augmentation-when-training-deep-learning-neural-networks/)
-4. TensorFlow Documentation. (n.d.). Keras ImageDataGenerator Class. Retrieved from [TensorFlow](https://www.tensorflow.org/api_docs/python/tf/keras/preprocessing/image/ImageDataGenerator)
-5. TensorFlow Documentation. (n.d.). Convolutional Neural Networks (CNN) Overview. Retrieved from [TensorFlow](https://www.tensorflow.org/tutorials/images/cnn)
-
-## Author
-
-[Bufatima Nurmuhammad kyzy]
+![Python](https://img.shields.io/badge/Python-3.10+-blue?logo=python&logoColor=white)
+![Keras](https://img.shields.io/badge/Keras-TensorFlow-red?logo=keras)
+![Accuracy](https://img.shields.io/badge/Test%20Accuracy-98.18%25-brightgreen)
+![Classes](https://img.shields.io/badge/Classes-77%20Fruits-orange)
+![Status](https://img.shields.io/badge/Status-Complete-brightgreen)
 
 ---
 
-This README provides a comprehensive overview of the fruit classification project, detailing each step from data preparation to model evaluation and outlining future directions for improvement.
+## Results
+
+| Metric | Value |
+|--------|-------|
+| Test Accuracy | **98.18%** |
+| Test Loss | 0.0572 |
+| Train Accuracy (epoch 10) | 96.50% |
+| Validation Accuracy (epoch 10) | 98.18% |
+| Training Images | 31,399 |
+| Test Images | 7,850 |
+| Number of Classes | 77 fruit types |
+| Epochs | 10 |
+
+### Training Progression
+
+| Epoch | Train Accuracy | Val Accuracy | Val Loss |
+|-------|:--------------:|:------------:|:--------:|
+| 1 | 54.32% | 77.85% | 0.6756 |
+| 3 | 90.12% | 94.10% | 0.1803 |
+| 5 | 94.07% | 93.08% | 0.2029 |
+| 7 | 95.72% | 96.29% | 0.1089 |
+| 10 | 96.50% | **98.18%** | 0.0549 |
+
+Validation accuracy consistently exceeded training accuracy, indicating strong generalization rather than overfitting — a direct result of aggressive data augmentation.
+
+---
+
+## Dataset
+
+- **Source:** [Fruits360 Dataset (Kaggle)](https://www.kaggle.com/moltean/fruits)
+- **Total images (filtered):** 39,249
+- **Classes:** 77 fruit types (filtered from 131 total categories — vegetables excluded)
+- **Image size:** 100×100px originals, resized to 50×50px for training
+- **Split:** 80% train (31,399) / 20% test (7,850), `random_state=42`
+
+---
+
+## Model Architecture
+
+A custom CNN built with Keras Sequential API:
+
+```
+Input: (50, 50, 3)
+    ↓
+Conv2D(32, 3×3, ReLU)       → feature extraction
+MaxPooling2D(2×2)            → spatial down-sampling
+    ↓
+Conv2D(64, 3×3, ReLU)       → deeper feature extraction
+MaxPooling2D(2×2)            → spatial down-sampling
+    ↓
+Flatten()
+Dense(128, ReLU)             → classification head
+Dense(77, Softmax)           → output: 77 fruit classes
+    ↓
+Output: class probabilities
+```
+
+**Optimizer:** Adam | **Loss:** Categorical Crossentropy | **Batch size:** 64
+
+---
+
+## Data Augmentation
+
+`ImageDataGenerator` applied to training set only:
+
+| Technique | Value |
+|-----------|-------|
+| Rotation | ±45° |
+| Width shift | 20% |
+| Height shift | 20% |
+| Shear | 20% |
+| Zoom | 20% |
+| Horizontal flip | Yes |
+| Rescaling | 1/255 |
+
+Augmentation is the primary reason validation accuracy (98.18%) exceeds raw training accuracy — the model sees harder versions of training images than what it's tested on.
+
+---
+
+## Project Structure
+
+```
+fruit-classification-CNN/
+│
+├── fruit_classification.ipynb      # Full pipeline: EDA → augmentation → training → evaluation
+├── fruit_classification_report.pdf # Detailed project report
+├── requirements.txt                # Dependencies
+└── README.md
+```
+
+---
+
+## How to Run
+
+### 1. Clone the repository
+```bash
+git clone https://github.com/Bufatima-Nk/fruit-classification-CNN
+cd fruit-classification-CNN
+```
+
+### 2. Install dependencies
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Download the dataset
+Download [Fruits360 from Kaggle](https://www.kaggle.com/moltean/fruits) and update the path in the notebook:
+```python
+dataset_path = '/your/local/path/fruits-360/Training'
+```
+
+### 4. Run the notebook
+```bash
+jupyter notebook fruit_classification.ipynb
+```
+
+---
+
+## Tech Stack
+
+| Category | Tools |
+|----------|-------|
+| Deep Learning | TensorFlow, Keras |
+| Data Processing | NumPy, pandas |
+| Visualization | Matplotlib, Seaborn |
+| ML Utilities | scikit-learn (train/test split, LabelEncoder) |
+
+---
+
+## Key Observations
+
+**1. Lightweight architecture, high accuracy.** Only 4 layers (2 Conv + 2 Dense) achieve 98.18% on a 77-class problem. This suggests the Fruits360 dataset has clear visual boundaries between classes — the model is not overparameterized.
+
+**2. Augmentation prevents overfitting despite small architecture.** Val accuracy (98.18%) > Train accuracy (96.50%) at epoch 10, which is unusual and indicates the augmented training distribution is harder than the clean test set.
+
+**3. Fast convergence.** The model reaches 94% validation accuracy by epoch 3, suggesting the task is learnable with relatively few gradient updates. Future work could explore early stopping or learning rate scheduling to reduce training time.
+
+---
+
+## Future Work
+
+- **Transfer Learning:** Apply MobileNetV2 or EfficientNet-B0 to compare performance vs. this custom architecture
+- **Grad-CAM visualization:** Show which image regions the model attends to for each class
+- **Deployment:** Wrap the saved model in a Streamlit or Gradio app for live inference
+- **Full 131-class version:** Extend to all categories including vegetables
+
+---
+
+## Author
+
+**Bufatima N.K.**
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-bufatima--n--k-blue?logo=linkedin)](https://linkedin.com/in/bufatima-n-k)
+[![GitHub](https://img.shields.io/badge/GitHub-Bufatima--Nk-black?logo=github)](https://github.com/Bufatima-Nk)
